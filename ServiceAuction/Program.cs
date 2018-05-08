@@ -11,6 +11,10 @@ namespace ServiceAuction
 {
     class Program
     {
+        /// <summary>
+        /// main
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             CommonConfigurationBuilderBiz.SetConfgurationBuilder();
