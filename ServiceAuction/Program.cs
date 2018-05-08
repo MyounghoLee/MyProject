@@ -12,7 +12,7 @@ namespace ServiceAuction
     class Program
     {
         /// <summary>
-        /// main
+        /// main 22
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
