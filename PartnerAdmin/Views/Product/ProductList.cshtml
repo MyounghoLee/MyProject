@@ -1,0 +1,79 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script src="~/app/Product.js"></script>
+<div class="page-header">
+    <h2>상품 리스트</h2>
+</div>
+<div class="container">
+    <div ng-app="productApp"  ng-controller="productCtrl">
+        <div block-ui="main" class="block-ui-main"></div>
+        <select ng-model="partnerId">
+            <option value="AUCTION2" selected="selected">옥션</option>
+            <option value="GMARKET2">G마켓</option>
+            <option value="SK_11ST">11번가</option>
+        </select>
+        <input type="text" ng-model="goodId">
+        <span><a href="#" ng-click="searchProductTarget(1)">검 색</a></span>
+        <a href="" class="btn btn-dark btn-small" ng-click="vm.download(vm.val.text)">
+            Download
+        </a>
+        <div class="table-responsive table-Item">
+            <table id="grid-dataList" class="table table-striped table-bordered">
+                <thead>
+                    <tr class="table">
+                        <th>PartnerID</th>
+                        <th>GoodID</th>
+                        <th>P_GoodID</th>
+                        <th>IsPrice</th>
+                        <th>IsOption</th>
+                        <th>IsState</th>
+                        <th>IsDel</th>
+                        <th>IsSync</th>
+                        <th>IsMapping</th>
+                        <th>IsLimitQty</th>
+                        <th>ErrCnt</th>
+                        <th>OrderCnt</th>
+                        <th>RcdDateCvt</th>
+                        <th>UptDateCvt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loading message -->
+                    <tr ng-show="showLoading">
+                        <td colspan="13">
+                            <div><b>{{LoadingText}}</b></div>
+                        </td>
+                    </tr>
+                    <tr dir-paginate="idx in productTargetList | itemsPerPage:itemsPerPage" total-items="totalCount" pagination-id="productTargetList">
+                        <td>{{idx.PartnerID}}</td>
+                        <td>{{idx.GoodID}}</td>
+                        <td>{{idx.P_GoodID}}</td>
+                        <td>{{idx.IsPrice}}</td>
+                        <td>{{idx.IsOption}}</td>
+                        <td>{{idx.IsState}}</td>
+                        <td>{{idx.IsDel}}</td>
+                        <td>{{idx.IsSync}}</td>
+                        <td>{{idx.IsMapping}}</td>
+                        <td>{{idx.IsLimitQty}}</td>
+                        <td>{{idx.ErrCnt}}</td>
+                        <td>{{idx.OrderCnt}}</td>
+                        <td>{{idx.RcdDateCvt}}</td>
+                        <td>{{idx.UptDateCvt}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div align="center">
+                <dir-pagination-controls max-size="20"
+                                            direction-links="true"
+                                            boundary-links="true"
+                                            pagination-id="productTargetList"
+                                            on-page-change="searchProductTarget(newPageNumber)">
+                </dir-pagination-controls>
+            </div>
+        </div>
+    </div>
+</div>
+

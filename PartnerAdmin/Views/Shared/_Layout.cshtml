@@ -1,0 +1,77 @@
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@{ 
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="content-type" content="text-html" charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/lib/angular-block-ui/dist/angular-block-ui.min.css" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.blockUI.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/angular/angular.js"></script>
+    <script src="~/lib/angular-animate/angular-animate.js"></script>
+    <script src="~/lib/angularUtils-pagination/dirPagination.js"></script>
+    <script src="~/lib/angular-block-ui/dist/angular-block-ui.js"></script>
+    <script src="~/lib/angular-block-ui/dist/angular-block-ui.min.js"></script>
+    <title>@ViewData["Title"]  PartnerAdmin</title>
+    <script type="text/javascript">
+             $(document).ready(function () {
+                 $(".dropdown").hover(
+                     function () {
+                         $('.dropdown-menu', this).not('.in .dropdown-menu').stop(true, true).slideDown("fast");
+                         $(this).toggleClass('open');
+                     },
+                     function () {
+                         $('.dropdown-menu', this).not('.in .dropdown-menu').stop(true, true).slideUp("fast");
+                         $(this).toggleClass('open');
+                     }
+                 );
+
+                 $(document).on({
+                     ajaxStart: function () {
+                         $.blockUI({
+                             message: $('#divBlock'),
+                             baseZ: 2000,
+                             css:
+                             {
+                                 padding: 0,
+                                 margin: 0,
+                                 textAlign: 'center',
+                                 fontSize: 12,
+                                 cursor: 'auto',
+                                 border: 'none',
+                                 background: 'none'
+                             }
+                         });
+                     },
+                     ajaxStop: function () { $.unblockUI(); }
+                 });
+             });
+    </script>
+</head>
+<body block-ui="main">
+    <div id="divBlock" style="width:100%; display:none;">
+        <img src="~/images/loading3.gif" title="Click here to unblock" />
+    </div>
+
+    <header>
+        @await Component.InvokeAsync("NavigationMenu")
+    </header>
+    <div class="body-content">
+        @RenderBody()
+    </div>
+    <hr>
+    <footer>
+        @await Component.InvokeAsync("Copyright")
+    </footer>
+</body>
+</html>

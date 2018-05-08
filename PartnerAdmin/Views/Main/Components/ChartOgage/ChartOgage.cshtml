@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+<h2>오가게</h2>
+<div class="row" ng-controller="ChartCtrlGA">
+    <input type="hidden" ng-model="domCd" value="GA" />
+    <div class="panel-body">
+        <select ng-model="beforeDay" ng-change="getDdlSearchChart(beforeDay);">
+            <option value="7" >7일 전</option>
+            <option value="30" selected="selected">30일 전</option>
+            <option value="365">1년 전</option>
+            <option value="1825">5년 전</option>
+        </select>
+        <nvd3 options="options" data="chartDataGA"></nvd3>
+    </div>
+</div>

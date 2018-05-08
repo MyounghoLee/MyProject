@@ -1,0 +1,562 @@
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@model Member
+
+@{ 
+    Layout = null;
+    string ViewEmailCheckString = ViewBag.EmailCheckString;
+    string ViewEmailCheckErrorMessage = ViewBag.EmailCheckErrorMessage;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text-html" charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/login.css" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.blockUI.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <title>@ViewData["Title"]  PartnerAdmin</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#login-form-link').click(function (e) {
+                $("#login-form").delay(100).fadeIn(100);
+                $("#register-form").fadeOut(100);
+                $('#register-form-link').removeClass('registerActive');
+                $(this).addClass('loginActive');
+                e.preventDefault();
+            });
+
+            $('#register-form-link').click(function (e) {
+                $("#register-form").delay(100).fadeIn(100);
+                $("#login-form").fadeOut(100);
+                $('#login-form-link').removeClass('loginActive');
+                $(this).addClass('registerActive');
+                e.preventDefault();
+            });
+
+            $("#login-password").keypress(function (e) {
+                var key = e.which;
+                if (key == 13)  // the enter key code
+                {
+                    $("#login-submit").click();
+                    return false;
+                }
+            });
+
+            $.validator.addMethod("emailContactCheck", function (value, element) {
+                if (value.indexOf("@ViewEmailCheckString.ToLower()") != -1) {
+
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            }, "@ViewEmailCheckErrorMessage");
+
+
+            $("#register-form").validate({
+                rules: {
+                    registerName: {
+                        required: true,
+                        minlength : 2,
+                        maxlength : 10
+                    },
+                    registerEmail: {
+                        required: true,
+                        email: true,
+                        emailContactCheck : true
+                    },
+                    registerPassword: {
+                        required: true,
+                        minlength: 10,
+                        maxlength : 50
+                    },
+                    registerConfirmpassword: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 50,
+                        equalTo: "#register-password"
+                    }
+                },
+                messages: {
+                    registerName: {
+                        required: "이름을 입력 해 주세요",
+                        minlength: "이름은 2~10자까지 입력 해 주세요.",
+                        maxlength: "이름은 2~10자까지 입력 해 주세요."
+                    },
+                    registerEmail: {
+                        required: "email을 입력 해 주세요.",
+                        email: "email이 유효하지 않습니다.",
+                    },
+                    registerPassword: {
+                        required: "패스워드를 입력 해 주세요.",
+                        minlength: "패스워드는 10~50자까지 가능합니다.",
+                        maxlength: "패스워드는 10~50자까지 가능합니다."
+                    },
+                    registerConfirmpassword: {
+                        required: "확인용 패스워드를 입력 해 주세요.",
+                        minlength: "패스워드는 10~50자까지 가능합니다.",
+                        maxlength: "패스워드는 10~50자까지 가능합니다.",
+                        equalTo: "패스워드가 일치하지 않습니다."
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    element.parent(".col-md-8").find(".help-block").text(error.text());
+                },
+                highlight: function (element) {
+                    $(element).closest(".form-group").removeClass("text-center has-success").addClass("text-center has-error"); // add the Bootstrap error class to the control group
+                    $(element).closest(".form-group > .col-md-8").find("#span-glyphicon").removeClass("glyphicon glyphicon-ok").addClass("glyphicon glyphicon-remove").removeAttr("style");
+                },
+                unhighlight: function(element) {
+                    $(element).closest(".form-group").removeClass("text-center has-error").addClass("text-center has-success"); // remove the Boostrap error class from the control group
+                    $(element).closest(".form-group > .col-md-8").find("#span-glyphicon").removeClass("glyphicon glyphicon-remove").addClass("glyphicon glyphicon-ok").removeAttr("style");
+                    $(element).closest(".form-group > .col-md-8").find(".help-block").text("");
+                },
+            });
+
+            $("#forgotPasswod-form").validate({
+                rules: {
+                    forgotEmail: {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    forgotEmail: {
+                        required: "email을 입력 해 주세요.",
+                        email: "email이 유효하지 않습니다."
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    element.closest(".form-group").find(".col-xs-11 > #forgot-error-email").text(error.text());
+                },
+                highlight: function (element) {
+                    $(element).closest(".form-group").removeClass("text-center has-success").addClass("text-center has-error"); // add the Bootstrap error class to the control group
+                    $(element).closest(".form-group").find("#span-glyphicon").removeClass("glyphicon glyphicon-ok").addClass("glyphicon glyphicon-remove").removeAttr("style");
+                },
+                unhighlight: function (element) {
+                    $(element).closest(".form-group").removeClass("text-center has-error").addClass("text-center has-success"); // remove the Boostrap error class from the control group
+                    $(element).closest(".form-group").find("#span-glyphicon").removeClass("glyphicon glyphicon-remove").addClass("glyphicon glyphicon-ok").removeAttr("style");
+                    $(element).closest(".form-group").find(".col-xs-11 > #forgot-error-email").text("");
+                }
+            });
+
+            $(document).on({
+                ajaxStart: function () {
+                    $.blockUI({
+                        message: $('#divBlock'),
+                        baseZ: 2000,
+                        css:
+                        {
+                            padding: 0,
+                            margin: 0,
+                            textAlign: 'center',
+                            fontSize: 12,
+                            cursor: 'auto',
+                            border: 'none',
+                            background: 'none'
+                        }
+                    });
+                },
+                ajaxStop: function () { $.unblockUI(); }
+            });
+        });
+
+        function submitLoginCheck()
+        {
+            if ($("#login-email").val() == "") {
+                alert("이메일을 입력 해 주세요.");
+                $("#login-email").focus();
+                return false;
+            }
+
+            if ($("#login-password").val() == "") {
+                alert("비밀번호를 입력 해 주세요.");
+                $("#login-password").focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        function submitLogin() {
+
+            if (submitLoginCheck())
+            {
+                var formData = {
+                    email: $("#login-email").val(),
+                    password: $("#login-password").val()
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Member/Login",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(formData),
+                    dataType: "JSON",
+
+                    success: function (Response) {
+                        var jsonRes = JSON.parse(Response);
+                        if (jsonRes.Success) {
+                            alert(jsonRes.Message);
+                            location.href = '../Main/Main';
+                        }
+                        else {
+                            alert(jsonRes.Message);
+                            location.reload();
+                        }
+                    },
+                    error: function (XHR) {
+                        alert(XHR.statusText);
+                    }
+
+                });
+            }
+        }
+
+        function submitForgotPassword() {
+            if ($("#forgotPasswod-form").valid()) {
+                var formData = {
+                    email: $("#forgot-email").val()
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Member/ForgotPassword",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(formData),
+                    dataType: "JSON",
+                    success: function (Response) {
+                        var jsonRes = JSON.parse(Response);
+                        if (jsonRes.Success) {
+                            alert(jsonRes.Message);
+                            location.reload();
+                        }
+                        else {
+                            var element = $("#div-forgot-email");
+
+                            element.removeClass("has-success").addClass("text-center has-error"); // add the Bootstrap error class to the control group
+                            element.find(".col-xs-12 > #span-glyphicon").removeClass("glyphicon glyphicon-remove").addClass("glyphicon glyphicon-remove").removeAttr("style");
+                            element.find(".col-xs-11 > #forgot-error-email").text(jsonRes.Message);
+                        }
+                    },
+                    error: function (XHR) {
+                        alert(XHR.statusText);
+                    }
+
+                });
+            }
+        }
+
+        function submitRegister() {
+
+            if ($("#register-form").valid()) {
+                var formData = {
+                    name: $("#register-name").val(),
+                    email: $("#register-email").val(),
+                    password: $("#register-password").val(),
+                    confirmpassword: $("#register-confirmpassword").val(),
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Member/RegisterEmail",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(formData),
+                    dataType: "JSON",
+                    success: function (Response) {
+                        var jsonRes = JSON.parse(Response);
+                        if (jsonRes.Success) {
+                            mailAuthenticationTimerModalOpen();
+                            mailAuthenticationCheck(formData);
+                        }
+                        else {
+                            if (jsonRes.Message) {
+                                alert(jsonRes.Message);
+                                location.reload();
+                            }
+                            else {
+                                for (var i = 0; i < jsonRes.List.length; i++) {
+                                    var element = $("#div-register-" + jsonRes.List[i].Key.toLowerCase());
+
+                                    element.removeClass("has-success").addClass("text-center has-error"); // add the Bootstrap error class to the control group
+                                    element.find(".col-md-8> #span-glyphicon").removeClass("glyphicon glyphicon-remove").addClass("glyphicon glyphicon-remove").removeAttr("style");
+                                    element.find(".col-md-8 > #register-error-" + jsonRes.List[i].Key.toLowerCase()).text(jsonRes.List[i].Value);
+                                }
+                            }
+                        }
+                    },
+                    error: function (XHR) {
+                        alert(XHR.statusText);
+                    }
+
+                });
+            }
+        }
+
+        function mailAuthenticationCheck(formData) {
+
+            if ($("#hdnTimerValue").val() != "0") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Member/MailAuthentication",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(formData),
+                    dataType: "JSON",
+                    success: function (Response) {
+                        var jsonRes = JSON.parse(Response);
+                        if (jsonRes.Success) {
+                            if (jsonRes.Message == "인증대기") {
+                                mailAuthenticationCheck(formData);
+                            } else {
+                                $("#pTimer").css("display", "none");
+                                $("#btnCompleteRegister").css("display", "block");
+                            }
+                        }
+                        else {
+                            alert(jsonRes.Message);
+                            location.reload();
+                        }
+                    },
+                    error: function (XHR) {
+                        alert(XHR.statusText);
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        function mailAuthenticationTimerModalOpen() {
+            $.unblockUI();
+            layer_open("authTimeModal");
+            //$("#authTimeModal").modal("show");
+            updateTime(0, 2, 0);
+        }
+
+        function layer_open(el) {
+            var temp = $('#' + el);     //레이어의 id를 temp변수에 저장
+            var bg = temp.prev().hasClass('bg');    //dimmed 레이어를 감지하기 위한 boolean 변수
+                if(bg){
+                $('.layer').fadeIn();
+            }else {
+                temp.fadeIn();  //bg 클래스가 없으면 일반레이어로 실행한다.
+            }
+            // 화면의 중앙에 레이어를 띄운다.
+            if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+                else temp.css('top', '0px');
+
+            if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+            else temp.css('left', '0px');
+        }         
+
+        function updateTime(prev_hours, prev_minutes, prev_seconds) {
+            var countDownDate = new moment().add(prev_hours, 'hours').add(prev_minutes, 'minutes').add(prev_seconds, 'seconds');
+            // Update the count down every 1 second
+            var x = setInterval(function () {
+
+                // Get todays date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now an the count down date
+                var distance = countDownDate - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                setStopwatch(hours, minutes, seconds);
+                // If the count down is over, write some text 
+                if (distance < 0) {
+                    clearInterval(x);
+                    $("#pTimer").css("display", "none");
+                    $("#btnExpireRegister").css("display", "block");
+                }
+            }, 1000);
+        }
+
+        function setStopwatch(hours, minutes, seconds) {
+            //$("#hours").html(prependZero(hours, 2));
+            $("#hdnTimerValue").val(hours + minutes + seconds);
+            $("#pTimer").html(minutes + "분" + seconds + "초");
+        }
+    </script>
+
+</head>
+<body>
+    <div id="divBlock" style="width:100%; display:none;">
+        <img src="~/images/loading3.gif"  title="Click here to unblock" />
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <h2>PartnerAdmin</h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-login">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <a href="#" class="loginActive" id="login-form-link">로그인</a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a href="#" id="register-form-link">회원가입</a>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="panel-body">
+                        <form id="login-form"  role="form" class="form-horizontal" style="display: block;">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="name">email : </label>
+                                <input type="email" name="email" id="login-email" tabindex="1" class="form-control" placeholder="tricycle email">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="name">password :</label>
+                                <input type="password" name="password" id="login-password" tabindex="2" class="form-control" placeholder="password"  />
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6 col-sm-offset-3">
+                                        <input type="button" name="login-submit" id="login-submit" tabindex="3" class="form-control btn btn-login" value="로그인" onclick="submitLogin();">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="text-center">
+                                            <a href="#" tabindex="4" data-toggle="modal" data-target="#pwdModal">비밀번호찾기</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form id="register-form" role="form" class="form-horizontal" style="display: none;">
+                            <div id="div-register-name" class="form-group has-feedback">
+                                <label class="col-md-3 control-label" for="register-name">name :</label>
+                                <div class="col-md-8">
+                                    <input type="text" name="registerName" id="register-name" tabindex="1" class="form-control" placeholder="name" />
+                                    <span id="span-glyphicon" class="form-control-feedback" style="display:none;"></span>
+                                    <small class="help-block" id="register-error-name" style="display:inline;"></small>
+                                </div>
+                            </div>
+                            <div id="div-register-email" class="form-group has-feedback">
+                                <label class="col-md-3 control-label" for="register-email">email :</label>
+                                <div class="col-md-8">
+                                    <input type="email" name="registerEmail" id="register-email" tabindex="1" class="form-control" placeholder="tricycle email" />
+                                    <span id="span-glyphicon" class='form-control-feedback' style="display:none;"></span>
+                                    <small class="help-block" id="register-error-email" style="display:inline;"></small>
+                                </div>
+                            </div>
+                            <div id="div-register-password" class="form-group has-feedback">
+                                <label class="col-md-3 control-label" for="register-password">password :</label>
+                                <div class="col-md-8">
+                                    <input type="password" name="registerPassword" id="register-password" tabindex="2" class="form-control" placeholder="password" />
+                                    <span id="span-glyphicon" class="form-control-feedback" style="display:none;"></span>
+                                    <small class="help-block" id="register-error-password" style="display:inline;"></small>
+                                </div>
+                            </div>
+                            <div id="div-register-confirm" class="form-group has-feedback">
+                                <label class="col-md-3 control-label" for="register-confirmpassword">confirm :</label>
+                                <div class="col-md-8">
+                                    <input type="password" name="registerConfirmpassword" id="register-confirmpassword" tabindex="2" class="form-control" placeholder="confirm password" />
+                                    <span id="span-glyphicon" class="form-control-feedback" style="display:none;"></span>
+                                    <small class="help-block" id="register-error-confirmpassword" style="display:inline;"></small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6 col-sm-offset-3">
+                                        <input type="button" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="회원가입하기" onclick="submitRegister();">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!--modal1-->
+    <div tabindex="-1" class="modal fade" id="pwdModal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="form-horizontal" id="forgotPasswod-form">
+                    <div class="modal-header">
+                        <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                        <h1 class="text-center">비밀번호 찾기</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="text-center">
+                                    <p>비밀번호를 찾고자 하는 이메일 아이디를 입력해 주세요.</p>
+                                    <div class="panel-body">
+                                        <div id="div-forgot-email" class="form-group">
+                                            <div class="col-xs-12">
+                                                <input name="forgotEmail" class="form-control input-lg" style="display:inline;" id="forgot-email" type="email" placeholder="E-mail ID">
+                                                <span id="span-glyphicon" class="form-control-feedback" style="display:none;"></span>
+                                            </div>
+                                            <div class="col-xs-11">
+                                                <small class="help-block" id="forgot-error-email" style="display:inline;"></small>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <input type="button" name="forgot-password" id="forgot-password" class="btn btn-lg btn-primary btn-block" style="display:inline;" value="이메일 전송하기" onclick="submitForgotPassword();">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-md-12">
+                            <button class="btn" aria-hidden="true" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--layer1-->
+    <div class="layer">
+        <div class="bg"></div>
+        <div class="pop-layer" id="authTimeModal">
+            <div class="pop-container">
+                <div class="pop-conts">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-center">
+                                <p>이메일을 확인하여 인증 해주세요.</p>
+                                <div class="panel-body">
+                                    <div id="div-forgot-email" class="form-group">
+                                        <div class="col-xs-12">
+                                            <p id="pTimer"></p>
+                                            <input type="hidden" id="hdnTimerValue" value="1" />
+                                            <input type="button" name="completeRegister" id="btnCompleteRegister" class="btn btn-lg btn-success btn-block" style="display:none;" value="회원가입완료" onclick="location.reload();">
+                                            <input type="button" name="completeRegister" id="btnExpireRegister" class="btn btn-lg btn-warning btn-block" style="display:none;" value="인증기간만료" onclick="location.reload();">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

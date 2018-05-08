@@ -1,0 +1,47 @@
+﻿@model List<PartnerAdminMenu>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string _userName = User.Claims.Where(w => w.Type == "Name").Select(s => s.Value).FirstOrDefault();
+    string _userEmail = User.Claims.Where(w => w.Type == "Email").Select(s => s.Value).FirstOrDefault();
+
+}
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar-header">
+        <a href="/Main/Main" class="navbar-brand">PartnerAdmin</a>
+    </div>
+    <div class="collapse navbar-collapse js-navbar-collapse">
+           
+        <ul class="nav navbar-nav">
+            @foreach (var parent in Model.Where(w => w.Menu_ParentId == 0 && w.Menu_IsUse).OrderBy(o => o.Menu_Sort))
+            {
+                <li class="dropdown">
+                    <a href="@parent.Menu_Url" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@parent.Menu_Name<b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        @foreach (var child in Model.Where(w => w.Menu_ParentId == parent.Menu_Id && w.Menu_IsUse).OrderBy(o => o.Menu_Sort))
+                        {
+                            <li><a href="@child.Menu_Url">@child.Menu_Name</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    <span class="glyphicon glyphicon-user"></span>
+                    @string.Format("{0} ({1})", _userName, _userEmail)
+                    <b class="caret"></b>
+                    &nbsp;&nbsp;
+                </a>
+                <ul role="menu" class="dropdown-menu">
+                    <li><a href="/Member/MemberInfo">회원정보</a></li>
+                    <li><a href="/Member/MemberEdit">회원정보변경</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/Member/Logout">로그아웃</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

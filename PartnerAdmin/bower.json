@@ -1,0 +1,18 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "jquery": "2.2.0",
+    "jquery-validation": "1.14.0",
+    "jquery-validation-unobtrusive": "3.2.6",
+    "moment": "2.18.1",
+    "angular": "v1.6.4-build.5317+sha.0c3620b",
+    "angular-animate": "v1.6.5-build.5353+sha.136a42a",
+    "angularUtils-pagination": "angular-utils-pagination#v0.11.1",
+    "angular-block-ui": "v0.2.2"
+  },
+  "resolutions": {
+    "angular": "1.6.5-build.5353+sha.136a42a"
+  }
+}
